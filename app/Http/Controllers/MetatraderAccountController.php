@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMetatraderAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class MetatraderAccountController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreMetatraderAccount $request)
     {
-        $deployAccountApiUrl = 'https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai/users/current/accounts';
+        // Meta API URL for adding/deploying the Metatrader Account
+        $url = 'https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai/users/current/accounts';
 
-        $request->validate([
-            'account_name' => 'required|string',
-            'mt_version' => 'required|string',
-            'mt_login' => 'required|string',
-            'mt_password' => 'required|string',
-            'mt_server_name' => 'required|string',
-            'meta_api_access_key' => 'required|string',
-        ]);
+        // Headers for the request to add/deploy the Metatrader Account
+        $headers = [
+            'auth-token' => env('META_API_ACCESS_KEY'),
+            'transaction-id' => '7Fb2tR9wGnE4sL5pY3ZaX6cD8vQ0uV2x'
+        ];
 
-        $data = [
+        // Body for the request to add/deploy the Metatrader Account
+        $body = [
             "symbol" => "EURUSD",
             "magic" => 0,
             "quoteStreamingIntervalInSeconds" => 2.5,
@@ -41,10 +41,9 @@ class MetatraderAccountController extends Controller
             "metastatsApiEnabled" => true
         ];
 
-        $response = Http::withHeaders([
-            'auth-token' => $request->input('meta_api_access_key'),
-            'transaction-id' => '7Fb2tR9wGnE4sL5pY3ZaX6cD8vQ0uV2x'
-        ])->post($deployAccountApiUrl, $data);
+        // Sending the request to MetaAPI with above headers and body
+        $response = Http::withHeaders($headers)
+            ->post($url, $body);
 
         if ($response->successful()) {
             $responseData = $response->json();
