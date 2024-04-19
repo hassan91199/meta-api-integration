@@ -20,3 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/metatrader-accounts', [MetatraderAccountController::class, 'store']);
+Route::post('/metatrader-accounts/historical-trades', [MetatraderAccountController::class, 'getHistoricalTrades']);
