@@ -17,7 +17,7 @@ class MetatraderAccountController extends Controller
 
         // Headers for the request to add/deploy the Metatrader Account
         $headers = [
-            'auth-token' => env('META_API_ACCESS_KEY'),
+            'auth-token' => config('metaapi.access_key'),
             'transaction-id' => '7Fb2tR9wGnE4sL5pY3ZaX6cD8vQ0uV2x'
         ];
 
@@ -74,7 +74,7 @@ class MetatraderAccountController extends Controller
 
         // Headers for the request to add/deploy the Metatrader Account
         $headers = [
-            'auth-token' => env('META_API_ACCESS_KEY'),
+            'auth-token' => config('metaapi.access_key'),
         ];
 
         try {
