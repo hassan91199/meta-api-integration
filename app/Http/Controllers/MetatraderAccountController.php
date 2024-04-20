@@ -59,31 +59,26 @@ class MetatraderAccountController extends Controller
 
     public function getHistoricalTrades(Request $request)
     {
-        $oldestTimestamp = substr(Carbon::createFromTimestamp(0)->format('Y-m-d H:i:s.u'), 0, -3);
-        $currentTimestamp = substr(Carbon::now()->format('Y-m-d H:i:s.u'), 0, -3);
-
         $validatedData = $request->validate([
             'account_id' => 'required|string',
         ]);
 
         $accountId = $validatedData['account_id'];
 
+        $startTime = urlencode(substr(Carbon::createFromTimestamp(0)->format('Y-m-d H:i:s.u'), 0, -3));
+        $endTime = urlencode(substr(Carbon::now()->format('Y-m-d H:i:s.u'), 0, -3));
+
         // Meta API URL for adding/deploying the Metatrader Account
-        $url = 'https://metastats-api-v1.london.agiliumtrade.ai/users/current/accounts/218cac6c-c014-4051-b4d0-b3d8d2db5d46/historical-trades/2023-01-01%2000%3A00%3A00.000/2024-01-01%2000%3A00%3A00.000?updateHistory=true';
+        $url = "https://metastats-api-v1.london.agiliumtrade.ai/users/current/accounts/{$accountId}/historical-trades/{$startTime}/{$endTime}?updateHistory=true";
 
         // Headers for the request to add/deploy the Metatrader Account
         $headers = [
             'auth-token' => env('META_API_ACCESS_KEY'),
         ];
-        
-        return response()->json([
-            'old' => $oldestTimestamp,
-            'current' => $currentTimestamp,
-        ]);
-        
+
         // Sending the request to MetaAPI with above headers and body
         $response = Http::withHeaders($headers)
-            ->post($url, $body);
+            ->get($url);
 
         if ($response->successful()) {
             $responseData = $response->json();
@@ -91,7 +86,7 @@ class MetatraderAccountController extends Controller
         } else {
             $errorCode = $response->status();
             $errorMessage = $response->body();
-            
+
             return response()->json(['error' => $errorMessage], $errorCode);
         }
     }
