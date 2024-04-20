@@ -53,12 +53,13 @@ class MetatraderAccountController extends Controller
                 $responseData = $response->json();
                 return response()->json($responseData);
             } else {
+                $responseData = $response->json();
                 $errorCode = $response->status();
-                $errorMessage = $response->body();
+                $errorMessage = $responseData['message'];
 
                 // Logging the error and returning the appropriate response
-                Log::error("Error deploying metatrader account: {$errorMessage}", ['status' => $errorCode]);
-                return response()->json(['error' => 'An error occurred while deploying metatrader account.'], $errorCode);
+                Log::error("Error deploying metatrader account", $responseData);
+                return response()->json(['error' => $errorMessage], $errorCode);
             }
         } catch (\Exception $e) {
             Log::error("Server error: {$e->getMessage()}");
@@ -96,12 +97,13 @@ class MetatraderAccountController extends Controller
                 $responseData = $response->json();
                 return response()->json($responseData);
             } else {
+                $responseData = $response->json();
                 $errorCode = $response->status();
-                $errorMessage = $response->body();
+                $errorMessage = $responseData['message'];
 
                 // Logging the error and returning the appropriate response
-                Log::error("Error fetching historical trades: {$errorMessage}", ['status' => $errorCode]);
-                return response()->json(['error' => 'An error occurred while fetching historical trades.'], $errorCode);
+                Log::error("Error fetching historical trades", $responseData);
+                return response()->json(['error' => $errorMessage], $errorCode);
             }
         } catch (\Exception $e) {
             Log::error("Server error: {$e->getMessage()}");
