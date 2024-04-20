@@ -69,8 +69,15 @@ class MetatraderAccountController extends Controller
         $startTime = urlencode(substr(Carbon::createFromTimestamp(0)->format('Y-m-d H:i:s.u'), 0, -3));
         $endTime = urlencode(substr(Carbon::now()->format('Y-m-d H:i:s.u'), 0, -3));
 
+        // Preparing the query string for the request
+        $queryData = [
+            'updateHistory' => 'true',
+        ];
+
+        $queryString = http_build_query($queryData);
+
         // Meta API URL for adding/deploying the Metatrader Account
-        $url = "https://metastats-api-v1.london.agiliumtrade.ai/users/current/accounts/{$accountId}/historical-trades/{$startTime}/{$endTime}?updateHistory=true";
+        $url = "https://metastats-api-v1.london.agiliumtrade.ai/users/current/accounts/{$accountId}/historical-trades/{$startTime}/{$endTime}?{$queryString}";
 
         // Headers for the request to add/deploy the Metatrader Account
         $headers = [
