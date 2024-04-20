@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\HistoricalTradesRequest;
 use App\Http\Requests\StoreMetatraderAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -58,13 +59,9 @@ class MetatraderAccountController extends Controller
         }
     }
 
-    public function getHistoricalTrades(Request $request)
+    public function getHistoricalTrades(HistoricalTradesRequest $request)
     {
-        $validatedData = $request->validate([
-            'account_id' => 'required|string',
-        ]);
-
-        $accountId = $validatedData['account_id'];
+        $accountId = $request['account_id'];
 
         $startTime = urlencode(substr(Carbon::createFromTimestamp(0)->format('Y-m-d H:i:s.u'), 0, -3));
         $endTime = urlencode(substr(Carbon::now()->format('Y-m-d H:i:s.u'), 0, -3));
