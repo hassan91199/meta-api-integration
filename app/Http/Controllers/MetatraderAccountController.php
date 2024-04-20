@@ -44,18 +44,25 @@ class MetatraderAccountController extends Controller
             "metastatsApiEnabled" => true
         ];
 
-        // Sending the request to MetaAPI with above headers and body
-        $response = Http::withHeaders($headers)
-            ->post($url, $body);
+        try {
+            // Sending the request to MetaAPI with above headers and body
+            $response = Http::withHeaders($headers)
+                ->post($url, $body);
 
-        if ($response->successful()) {
-            $responseData = $response->json();
-            return response()->json($responseData);
-        } else {
-            $errorCode = $response->status();
-            $errorMessage = $response->body();
+            if ($response->successful()) {
+                $responseData = $response->json();
+                return response()->json($responseData);
+            } else {
+                $errorCode = $response->status();
+                $errorMessage = $response->body();
 
-            return response()->json(['error' => $errorMessage], $errorCode);
+                // Logging the error and returning the appropriate response
+                Log::error("Error fetching historical trades: {$errorMessage}", ['status' => $errorCode]);
+                return response()->json(['error' => 'An error occurred while fetching historical trades.'], $errorCode);
+            }
+        } catch (\Exception $e) {
+            Log::error("Server error: {$e->getMessage()}");
+            return response()->json(['error' => 'Server Error.'], 500);
         }
     }
 
